@@ -10,7 +10,6 @@ def obtener_job(db: Session, job_id: int):
     return job
 
 def crear_job(db: Session, job_data: JobCreate):
-    # 🔐 Limpieza segura del texto para evitar errores de codificación
     try:
         texto_limpio = job_data.texto.encode("utf-8", errors="ignore").decode("utf-8")
     except Exception as e:
@@ -21,7 +20,6 @@ def crear_job(db: Session, job_data: JobCreate):
     db.commit()
     db.refresh(nuevo_job)
 
-    # 🔁 Llamada al servicio Java (opcional por ahora)
     try:
         import asyncio
         asyncio.create_task(

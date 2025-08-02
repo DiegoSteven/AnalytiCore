@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime
 from datetime import datetime
-from database import Base  # <- asegúrate que esta importación está correcta
+from database import Base
 
 class Job(Base):
     __tablename__ = "jobs"
