@@ -25,13 +25,8 @@ services:
     restart: always
     ports:
       - "8000:8000"
-    environment:
-      - DB_NAME=analyti_core_db
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_HOST=db
-      - DB_PORT=5432
-      - JAVA_SERVICE_URL=http://java-service:8080/analyze
+    env_file:
+      - ./python-service/.env
     volumes:
       - ./python-service:/app
     depends_on:
@@ -45,13 +40,29 @@ services:
       restart: always
       ports:
         - "8080:8080"
-      environment:
-        - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/analyti_core_db
-        - SPRING_DATASOURCE_USERNAME=postgres
-        - SPRING_DATASOURCE_PASSWORD=postgres
+      env_file:
+        - ./java-service/.env
       depends_on:
         db:
           condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - python-service
+      - java-service
 
 volumes:
   postgres_data:
